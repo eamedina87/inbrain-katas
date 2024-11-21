@@ -25,4 +25,25 @@ data class Generation(
 
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Generation
+
+        if (rows != other.rows) return false
+        if (columns != other.columns) return false
+        if (members.entries.size != other.members.entries.size) return false
+        members.forEach { (position, cell) ->
+            val key = other.members.keys.find {
+                it.row == position.row && it.column == position.column
+            }
+            val otherCell = other.members[key]
+            if (otherCell?.isCellAlive != cell.isCellAlive) {
+                return false
+            }
+        }
+        return true
+    }
+
 }
