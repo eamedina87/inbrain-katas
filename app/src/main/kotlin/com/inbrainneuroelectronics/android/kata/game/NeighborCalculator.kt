@@ -1,5 +1,7 @@
 package com.inbrainneuroelectronics.android.kata.game
 
+import androidx.annotation.VisibleForTesting
+
 interface INeighborCalculator {
 
     suspend fun getNeighborsPositionsFor(position: Position, rows: Int, cols: Int) : Result<List<Position>>
@@ -12,11 +14,18 @@ class NeighborCalculator : INeighborCalculator {
     //iterations of a generation of a given size
     private val inMemoryCalculatedNeighbors: MutableMap<Pair<Int, Int>, Map<Position, MutableList<Position>>> = mutableMapOf()
 
+    //We dont use zero-index. First element is (1,1)
     override suspend fun getNeighborsPositionsFor(
         position: Position,
         rows: Int,
         cols: Int
     ): Result<List<Position>> {
+        if (position.row < 1 || position.column < 1) {
+            return Result.failure(IllegalArgumentException("Position out of boundaries"))
+        }
+        if (rows < 1 || cols < 1) {
+            return Result.failure(IllegalArgumentException("We need a valid grid"))
+        }
         if (position.row > rows || position.column > cols) {
             return Result.failure(IllegalArgumentException("Position is not within the grid limits"))
         }
@@ -33,10 +42,10 @@ class NeighborCalculator : INeighborCalculator {
             val neighbors = mutableListOf<Position>()
 
             for (currentRow in position.row - 1..position.row + 1) {
-                if (currentRow < 0) continue
+                if (currentRow < 1) continue
                 if (currentRow > rows) continue
                 for (currentCol in position.column - 1 .. position.column + 1) {
-                    if (currentCol < 0) continue
+                    if (currentCol < 1) continue
                     if (currentCol > cols) continue
                     if (currentCol == position.column && currentRow == position.row) continue
                     neighbors.add(Position(row = currentRow, column = currentCol))
