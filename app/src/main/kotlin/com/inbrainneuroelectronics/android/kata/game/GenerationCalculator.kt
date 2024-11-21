@@ -14,7 +14,10 @@ class GenerationCalculator(
         for (col in 1..generation.columns) {
             for (row in 1..generation.rows) {
                 val position = Position(row = row, column = col)
-                val cell = generation.members[position] ?: return Result.failure(Exception("An error occurred obtaining cell in position $position"))
+                val key = generation.members.keys.find {
+                    it.row == position.row && it.column == position.column
+                } ?: return Result.failure(Exception("An error occurred obtaining key in position $position"))
+                val cell = generation.members[key] ?: return Result.failure(Exception("An error occurred obtaining cell in position $position"))
                 val neighborCalcResult = neighborCalculator.getNeighborsPositionsFor(
                     position = position,
                     cols = generation.columns,

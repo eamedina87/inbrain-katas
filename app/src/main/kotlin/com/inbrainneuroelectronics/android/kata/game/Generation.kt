@@ -46,4 +46,11 @@ data class Generation(
         return true
     }
 
+    override fun hashCode(): Int {
+        var result = rows
+        result = 31 * result + columns
+        result = 31 * result + members.hashCode()
+        return result
+    }
+
 }
